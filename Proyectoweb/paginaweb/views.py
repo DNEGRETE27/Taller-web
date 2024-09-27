@@ -63,7 +63,7 @@ def registrar_ventas(request):
         if form.is_valid():
             venta = form.save(commit=False)
             producto = venta.producto           
-            if producto.cantidad >= venta.cantidad:
+            if producto.unidades >= venta.cantidad:
                 venta.total = producto.precio * venta.cantidad
                 producto.cantidad -= venta.cantidad
                 producto.save()

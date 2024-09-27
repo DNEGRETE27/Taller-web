@@ -12,14 +12,49 @@ class Cliente(models.Model):
 
         return self.nombres
     
-
-class Productos(models.Model):
-    nombre=models.CharField(max_length=50)
-    unidades=models.IntegerField()
+class Categoria(models.Model):
+    nombre = models.CharField(max_length=100)
+    descripcion = models.TextField()
 
     def __str__(self):
-        return {self.nombre},{self.unidades}
+        return str(self.nombre)
 
+
+class Proveedor(models.Model):
+    nombre = models.CharField(max_length=100)
+    contacto = models.CharField(max_length=100)
+    telefono = models.CharField(max_length=15)
+
+    def __str__(self):
+        return str(self.nombre)
+
+class Etiqueta(models.Model):
+    nombre = models.CharField(max_length=50)
+
+    def __str__(self):
+        return str(self.nombre)
+    
+    
+class Productos(models.Model):
+    nombre = models.CharField(max_length=100)
+    categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE)
+    proveedor = models.ForeignKey(Proveedor, on_delete=models.SET_NULL, null=True)
+    etiquetas = models.ManyToManyField(Etiqueta)
+    cantidades = models.IntegerField()
+    precio = models.DecimalField(max_digits=10, decimal_places=2)
+    descripcion = models.TextField()
+    detalleProducto = models.OneToOneField('DetalleProducto', on_delete=models.CASCADE, related_name='porducto_detalle', null=True)
+
+    def __str__(self):
+        return str(self.nombre)
+    
+class DetalleProducto(models.Model):
+    producto = models.OneToOneField(Productos, on_delete=models.CASCADE)
+    especificaciones = models.TextField()
+    fecha_vencimiento = models.DateField(null=True, blank=True)
+
+    def __str__(self):
+        return f"Detalles de {self.producto.nombre}"
 
 class Ventas(models.Model):
     producto = models.ForeignKey(Productos, on_delete=models.CASCADE)
